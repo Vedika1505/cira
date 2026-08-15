@@ -1,0 +1,38 @@
+name: Ransomware Indicator Response
+description: >
+  Triggered on ransomware indicators (e.g. mass file rename/encryption
+  behavior flagged by EDR). Notifies SOC immediately, enriches the file
+  hash, and holds host isolation for human approval.
+match:
+  alert_type: ransomware_indicator
+  min_score: 0
+steps:
+  - name: Notify SOC immediately
+    action: notify_slack
+    params:
+      message: "🚨 RANSOMWARE INDICATOR — host={host} user={user} score={score} incident={incident_id}"
+
+  - name: Open incident ticket
+    action: create_ticket
+    params:
+      system: jira
+      title: "Ransomware indicator on {host}"
+      description: "Auto-created by CIRA. Alert {alert_id}, incident {incident_id}."
+
+  - name: Enrich file hash
+    action: enrich_file_hash
+    params:
+      file_hash: "{file_hash}"
+
+  - name: Isolate affected host
+    action: isolate_host
+    requires_approval: true
+    params:
+      host: "{host}"
+
+  - name: Quarantine malicious file
+    action: quarantine_file
+    requires_approval: true
+    params:
+      host: "{host}"
+      file_hash: "{file_hash}"

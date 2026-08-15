@@ -1,0 +1,19 @@
+name: Phishing Report Response
+description: >
+  Triggered when a user reports a phishing email. Low-impact triage
+  and notification only — no containment actions.
+match:
+  alert_type: phishing_reported
+  min_score: 0
+steps:
+  - name: Notify SOC
+    action: notify_slack
+    params:
+      message: "📧 Phishing reported by {user} — score={score} incident={incident_id}"
+
+  - name: Log for tracking
+    action: create_ticket
+    params:
+      system: jira
+      title: "Phishing report from {user}"
+      description: "Auto-created by CIRA. Alert {alert_id}."

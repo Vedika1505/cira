@@ -1,0 +1,28 @@
+name: Brute Force Login Response
+description: >
+  Triggered on repeated failed login attempts. Auto-blocks the source IP
+  (low-impact, easily reversible) but holds account actions for approval.
+match:
+  alert_type: brute_force
+  min_score: 30
+steps:
+  - name: Notify SOC
+    action: notify_slack
+    params:
+      message: "⚠️ Brute force detected — user={user} src_ip={src_ip} score={score}"
+
+  - name: Check IP reputation
+    action: enrich_ip_reputation
+    params:
+      ip: "{src_ip}"
+
+  - name: Block source IP at perimeter
+    action: block_ip
+    params:
+      ip: "{src_ip}"
+
+  - name: Force password reset
+    action: reset_password
+    requires_approval: true
+    params:
+      user: "{user}"
