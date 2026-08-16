@@ -2,7 +2,7 @@ import requests
 import random
 import time
 
-BASE = "http://localhost:8000"
+BASE = "https://cira-1-xxq3.onrender.com"
 
 TEMPLATES = [
     {"source": "crowdstrike", "alert_type": "ransomware_indicator", "host": "fin-ws-042", "user": "jsmith"},
