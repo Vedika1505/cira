@@ -18,7 +18,7 @@ steps:
       system: jira
       title: "Ransomware indicator on {host}"
       description: "Auto-created by CIRA. Alert {alert_id}, incident {incident_id}."
-
+ok/
   - name: Enrich file hash
     action: enrich_file_hash
     params:
